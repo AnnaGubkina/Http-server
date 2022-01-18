@@ -28,7 +28,7 @@ public class Main {
             System.out.println(text);
         });
 
-        server.addHandler("GET", "/messages", (request, out) -> {
+        server.addHandler("POST", "/messages", (request, out) -> {
             final String text = "<h1>POST /messages</h1>\n" +
                     "Headers: " + request.getHeaders() + "\n" +
                     "Body: " + request.getIn();
