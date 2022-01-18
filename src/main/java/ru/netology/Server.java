@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,9 +21,11 @@ public class Server {
 
     final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
     final ExecutorService threadPool;
+    private final Map<String, Map<String, Handler>> handlers;
 
     public Server(int poolSize) {
         this.threadPool = Executors.newFixedThreadPool(poolSize);
+        this.handlers = new ConcurrentHashMap<>();
     }
 
     public void serverOn(int port) {
@@ -34,6 +38,10 @@ public class Server {
         }
     }
 
+    public void addHandler(String method, String path, Handler handler) {
+        handlers.put(method, new ConcurrentHashMap<>(Map.of(path, handler)));
+
+    }
     public void handling(Socket socket) {
         while (true) {
             try (
