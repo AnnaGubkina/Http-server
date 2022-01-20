@@ -24,7 +24,7 @@ public class Server {
         this.threadPool = Executors.newFixedThreadPool(poolSize);
     }
 
-    public void serverOn(int port) {
+    public void serverOn(int port)  {
         try {
             final var serverSocket = new ServerSocket(port);
             final var socket = serverSocket.accept();
