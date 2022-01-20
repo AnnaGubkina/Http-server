@@ -24,23 +24,22 @@ public class Server {
         this.threadPool = Executors.newFixedThreadPool(poolSize);
     }
 
-    public void serverOn(int port)  {
-        try {
-            final var serverSocket = new ServerSocket(port);
-            final var socket = serverSocket.accept();
-            threadPool.submit(() -> handling(socket));
+    public void serverOn(int port) {
+        try (final var serverSocket = new ServerSocket(port)) {
+            while (true) {
+                final var socket = serverSocket.accept();
+                threadPool.submit(() -> handling(socket));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void handling(Socket socket) {
-        while (true) {
-            try (
-
-                    final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    final var out = new BufferedOutputStream(socket.getOutputStream());
-            ) {
+        try (
+                final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                final var out = new BufferedOutputStream(socket.getOutputStream());
+        ) {
                 // read only request line for simplicity
                 // must be in form GET /path HTTP/1.1
                 final var requestLine = in.readLine();
@@ -48,7 +47,7 @@ public class Server {
 
                 if (parts.length != 3) {
                     // just close socket
-                    continue;
+                    return;
                 }
 
                 final var path = parts[1];
@@ -60,7 +59,7 @@ public class Server {
                                     "\r\n"
                     ).getBytes());
                     out.flush();
-                    continue;
+                    return;
                 }
 
                 final var filePath = Path.of(".", "public", path);
@@ -82,7 +81,7 @@ public class Server {
                     ).getBytes());
                     out.write(content);
                     out.flush();
-                    continue;
+                    return;
                 }
 
                 final var length = Files.size(filePath);
@@ -99,5 +98,4 @@ public class Server {
                 ioException.printStackTrace();
             }
         }
-    }
 }
