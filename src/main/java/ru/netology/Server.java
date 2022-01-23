@@ -37,6 +37,7 @@ public class Server {
         }
     }
 
+
     public void addHandler(String method, String path, Handler handler) {
         Map<String, Handler> methodHandlers = new HashMap<>();
         if (handlers.containsKey(method)) {
@@ -88,6 +89,7 @@ public class Server {
         final var requestLine = reader.readLine();
         final var parts = requestLine.split(" ");
 
+
         if (parts.length != 3) {
             // close socket
             return null;
@@ -100,6 +102,8 @@ public class Server {
             int pos = line.indexOf(":");
             headers.put(line.substring(0, pos), line.substring(pos + 2));
         }
+
         return new Request(method, path, headers);
     }
 }
+
