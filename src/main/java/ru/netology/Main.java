@@ -52,7 +52,7 @@ public class Main {
                 out.flush();
             }
         });
-        server.serverOn(PORT);
+        server.start(PORT);
     }
 }
 

@@ -4,16 +4,18 @@ import java.util.Map;
 
 public class Request {
 
-    private final String method;
-    private final String path;
-    private final Map<String, String> headers;
+    private String method;
+    private String path;
+    private Map<String, String> params;
+    private Map<String, String> headers;
     private String body;
 
 
-    public Request(String method, String path, Map<String, String> headers) {
+    public Request(String method, String path, Map<String, String> headers, Map<String, String> params) {
         this.method = method;
         this.path = path;
         this.headers = headers;
+        this.params = params;
     }
 
     public String getMethod() {
@@ -32,5 +34,7 @@ public class Request {
         return body;
     }
 
-
+    public String getQueryParam(String name) {
+        return params.get(name);
+    }
 }

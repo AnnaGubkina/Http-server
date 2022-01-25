@@ -1,17 +1,22 @@
 package ru.netology;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 public class Server {
@@ -26,7 +31,7 @@ public class Server {
         this.handlers = new ConcurrentHashMap<>();
     }
 
-    public void serverOn(int port) {
+    public void start(int port) {
         try (final var serverSocket = new ServerSocket(port)) {
             while (true) {
                 final var socket = serverSocket.accept();
@@ -50,7 +55,7 @@ public class Server {
         return validPaths;
     }
 
-    public Map<String, Map<String, Handler>> getHandlers() {
+    private Map<String, Map<String, Handler>> getHandlers() {
         return handlers;
     }
 
@@ -93,13 +98,25 @@ public class Server {
             return null;
         }
         final String method = parts[0];
-        final var path = parts[1];
+        final var path = parts[1].split("\\?")[0];
+        var params = getQueryParams(parts[1]);
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = reader.readLine()).equals("")) {
             int pos = line.indexOf(":");
             headers.put(line.substring(0, pos), line.substring(pos + 2));
         }
-        return new Request(method, path, headers);
+        return new Request(method, path, headers, params);
+    }
+
+    public Map<String, String> getQueryParams(String str) {
+        int pos = str.indexOf("?");
+        if (pos > 0) {
+            str = str.substring(pos + 1);
+            List<NameValuePair> params = URLEncodedUtils.parse(str, Charset.defaultCharset(), '&');
+            Map<String, String> param = params.stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
+            return param;
+        }
+        return new HashMap<>();
     }
 }
