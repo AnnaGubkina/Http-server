@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class Request {
 
+
     private String method;
     private String path;
     private Map<String, String> params;
@@ -16,6 +17,7 @@ public class Request {
         this.path = path;
         this.headers = headers;
         this.params = params;
+
     }
 
     public String getMethod() {
@@ -33,6 +35,7 @@ public class Request {
     public String getBody() {
         return body;
     }
+
 
     public String getQueryParam(String name) {
         return params.get(name);

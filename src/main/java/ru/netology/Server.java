@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import java.nio.charset.Charset;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class Server {
             e.printStackTrace();
         }
     }
+
 
     public void addHandler(String method, String path, Handler handler) {
         Map<String, Handler> methodHandlers = new HashMap<>();
@@ -100,6 +103,7 @@ public class Server {
         final String method = parts[0];
         final var path = parts[1].split("\\?")[0];
         var params = getQueryParams(parts[1]);
+
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = reader.readLine()).equals("")) {
@@ -120,3 +124,4 @@ public class Server {
         return new HashMap<>();
     }
 }
+
