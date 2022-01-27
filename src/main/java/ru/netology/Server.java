@@ -1,6 +1,6 @@
 package ru.netology;
 
-import org.apache.http.NameValuePair;
+
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.io.BufferedOutputStream;
@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 
 public class Server {
@@ -109,13 +109,14 @@ public class Server {
         return new Request(method, path, headers, params);
     }
 
-    public Map<String, String> getQueryParams(String str) {
+    public Map<String, List<String>> getQueryParams(String str) {
         int pos = str.indexOf("?");
         if (pos > 0) {
             str = str.substring(pos + 1);
-            List<NameValuePair> params = URLEncodedUtils.parse(str, Charset.defaultCharset(), '&');
-            Map<String, String> param = params.stream().collect(Collectors.toMap(NameValuePair::getName, NameValuePair::getValue));
-            return param;
+            final HashMap<String, List<String>> paramsMap = new HashMap<>();
+            URLEncodedUtils.parse(str, StandardCharsets.UTF_8)
+                    .forEach(param -> paramsMap.computeIfAbsent(param.getName(), anything -> new ArrayList<>()).add(param.getValue()));
+            return paramsMap;
         }
         return new HashMap<>();
     }

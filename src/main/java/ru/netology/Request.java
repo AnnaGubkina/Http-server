@@ -1,17 +1,18 @@
 package ru.netology;
 
+import java.util.List;
 import java.util.Map;
 
 public class Request {
 
     private String method;
     private String path;
-    private Map<String, String> params;
+    private Map<String, List<String>> params;
     private Map<String, String> headers;
     private String body;
 
 
-    public Request(String method, String path, Map<String, String> headers, Map<String, String> params) {
+    public Request(String method, String path, Map<String, String> headers, Map<String, List<String>> params) {
         this.method = method;
         this.path = path;
         this.headers = headers;
@@ -34,7 +35,7 @@ public class Request {
         return body;
     }
 
-    public String getQueryParam(String name) {
+    public List<String> getQueryParam(String name) {
         return params.get(name);
     }
 }
