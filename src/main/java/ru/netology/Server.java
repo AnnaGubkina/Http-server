@@ -1,6 +1,6 @@
 package ru.netology;
 
-
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import java.io.BufferedOutputStream;
@@ -9,14 +9,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 
 public class Server {
@@ -99,7 +97,7 @@ public class Server {
         }
         final String method = parts[0];
         final var path = parts[1].split("\\?")[0];
-        var params = getQueryParams(parts[1]);
+        Map<String,List <String>> params = getParams(parts[1]);
         Map<String, String> headers = new HashMap<>();
         String line;
         while (!(line = reader.readLine()).equals("")) {
@@ -109,14 +107,17 @@ public class Server {
         return new Request(method, path, headers, params);
     }
 
-    public Map<String, List<String>> getQueryParams(String str) {
+    public Map<String, List<String>> getParams(String str) {
         int pos = str.indexOf("?");
         if (pos > 0) {
             str = str.substring(pos + 1);
-            final HashMap<String, List<String>> paramsMap = new HashMap<>();
-            URLEncodedUtils.parse(str, StandardCharsets.UTF_8)
-                    .forEach(param -> paramsMap.computeIfAbsent(param.getName(), anything -> new ArrayList<>()).add(param.getValue()));
-            return paramsMap;
+            List<NameValuePair> params = URLEncodedUtils.parse(str, Charset.defaultCharset(), '&');
+            Map<String, List<String>> paramMap = new HashMap<>();
+            for (NameValuePair param : params) {
+                paramMap.put(param.getName(), Collections.singletonList(param.getValue()));
+
+            }
+            return paramMap;
         }
         return new HashMap<>();
     }

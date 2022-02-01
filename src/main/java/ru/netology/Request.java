@@ -7,16 +7,16 @@ public class Request {
 
     private String method;
     private String path;
-    private Map<String, List<String>> params;
+    private Map<String, List<String>> queryParams;
     private Map<String, String> headers;
     private String body;
 
 
-    public Request(String method, String path, Map<String, String> headers, Map<String, List<String>> params) {
+    public Request(String method, String path, Map<String, String> headers, Map<String, List<String>> queryParams) {
         this.method = method;
         this.path = path;
         this.headers = headers;
-        this.params = params;
+        this.queryParams = queryParams;
     }
 
     public String getMethod() {
@@ -35,7 +35,11 @@ public class Request {
         return body;
     }
 
+    public Map<String, List<String>> getQueryParams() {
+        return queryParams;
+    }
+
     public List<String> getQueryParam(String name) {
-        return params.get(name);
+        return queryParams.get(name);
     }
 }
